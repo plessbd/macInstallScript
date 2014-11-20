@@ -14,16 +14,16 @@ brew doctor
 brew install caskroom/cask/brew-cask
 brew install node
 
-brew cask install atom bettertouchtool day-o iterm2 google-chrome spotify the-unarchiver virtualbox vagrant asepsis
 # instead of day-o (the developer does not like yosemite http://shauninman.com/archive/2011/10/20/day_o_mac_menu_bar_clock) use itsycal (http://www.mowglii.com/itsycal/)
-brew cask install itsycal
+brew cask install atom bettertouchtool iterm2 itsycal google-chrome spotify the-unarchiver virtualbox vagrant  asepsis 
 
 echo "installing QuickLook Plugins"
 #https://github.com/sindresorhus/quick-look-plugins
 brew cask install qlcolorcode qlstephen qlmarkdown quicklook-json quicklook-csv betterzipql
 
 echo "Installing APM modules"
-apm install linter linter-jshint linter-javac linter-shellcheck linter-htmlhint file-icons
+# look into http://blog.atom.io/2014/06/09/stars.html
+apm install atom-beautifier linter linter-jshint linter-javac linter-shellcheck linter-htmlhint file-icons
 
 echo "cleaning up"
 brew cask cleanup

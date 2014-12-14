@@ -1,4 +1,14 @@
 #!/bin/bash
+# I have an SSD and an HDD so set some stuff up
+# http://blog.macsales.com/13349-quick-tip-save-battery-by-spinning-down-hard-drive-sooner
+sudo pmset -a disksleep 5
+mkdir /Volumes/750GBHD/opt
+mkdir /Volumes/750GBHD/tmp
+mkdir -p /Volumes/750GBHD/Library/Caches/Homebrew
+sudo ln -s /Volumes/750GBHD/Library/Caches/Homebrew /Library/Caches/Homebrew
+ln -s /Volumes/750GBHD/opt/homebrew-cask /opt/homebrew-cask
+
+
 # https://github.com/Themitchell/OSX-Install-Scripts/
 which -s brew
 if [[ $? != 0 ]] ; then

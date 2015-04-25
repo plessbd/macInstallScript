@@ -21,10 +21,23 @@ fi
 
 export HOMEBREW_CASK_OPTS="--appdir=/Applications"
 brew doctor
-brew install caskroom/cask/brew-cask
-brew tap caskroom/versions
 
 brew install node
+# WIP
+# https://github.com/Homebrew/homebrew-nginx
+# brew tap homebrew/nginx
+# brew install nginx-full --with-fancyindex-module  --with-geoip --with-gzip-static --with-gzip-static --with-gunzip --with-google-perftools --with-upload-module  --with-upload-progress-module --with-spdy --with-realip
+
+#
+# Need to use the following to setup node and nginx
+#
+# http://nginx.com/blog/nginx-nodejs-websockets-socketio/
+# http://www.throrinstudio.com/dev/create-node-js-development-environment-on-osx/
+# http://stackoverflow.com/questions/29795469/node-js-socket-io-server-on-os-x-cannot-connect-more-than-120-clients
+#
+
+brew tap caskroom/versions
+brew install caskroom/cask/brew-cask
 
 brew cask install google-chrome-dev firefoxdeveloperedition
 

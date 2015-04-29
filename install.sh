@@ -32,6 +32,12 @@ brew tap homebrew/nginx
 brew install nginx-full --with-fancyindex-module  --with-geoip --with-gzip-static --with-gzip-static --with-gunzip --with-upload-module  --with-upload-progress-module --with-spdy --with-realip
 
 #https://jamielinux.com/articles/2013/08/act-as-your-own-certificate-authority/
+#https://gist.github.com/mtigas/952344
+#http://blog.nategood.com/client-side-certificate-authentication-in-ngi
+#https://gist.github.com/jed/6147872
+#http://blog.frd.mn/install-nginx-php-fpm-mysql-and-phpmyadmin-on-os-x-mavericks-using-homebrew/
+#https://gist.github.com/igalic/4943106
+#http://datacenteroverlords.com/2012/03/01/creating-your-own-ssl-certificate-authority/
 
 export USERS_NAME="`finger $(whoami) | egrep -o 'Name: [a-zA-Z0-9 ]{1,}' | cut -d ':' -f 2 | xargs echo`"
 export ROOTCA_LOC="/Users/`whoami`/Library/Application Support/Certificate Authority/${USERS_NAME}'s CA"
@@ -59,6 +65,11 @@ echo "Generate SSL cert for loclahost"
 openssl genrsa -out "${NGINX_SSL}localhost.key.pem" 4096
 openssl req -sha256 -new -key "${NGINX_SSL}localhost.key.pem" -out "${NGINX_SSL}localhost.csr.pem" -subj "/C=US/ST=NY/L=Clarence/O=Development/CN=localhost"
 openssl x509 -req -days 3650 -sha256 -CA "${ROOTCA_NAMES}.crt.pem" -CAkey "${ROOTCA_NAMES}.key.pem" -in "${NGINX_SSL}localhost.csr.pem" -set_serial 01  -out "${NGINX_SSL}localhost.crt.pem" -passin env:KEYPASS
+
+
+#
+# Look into dnsmasq for future
+# https://mallinson.ca/osx-web-development/
 
 #
 # Need to use the following to setup node and nginx

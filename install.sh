@@ -23,10 +23,42 @@ export HOMEBREW_CASK_OPTS="--appdir=/Applications"
 brew doctor
 
 brew install node
-# WIP
+
 # https://github.com/Homebrew/homebrew-nginx
-# brew tap homebrew/nginx
-# brew install nginx-full --with-fancyindex-module  --with-geoip --with-gzip-static --with-gzip-static --with-gunzip --with-google-perftools --with-upload-module  --with-upload-progress-module --with-spdy --with-realip
+
+echo "Installing nginx"
+
+brew tap homebrew/nginx
+brew install nginx-full --with-fancyindex-module  --with-geoip --with-gzip-static --with-gzip-static --with-gunzip --with-upload-module  --with-upload-progress-module --with-spdy --with-realip
+
+#https://jamielinux.com/articles/2013/08/act-as-your-own-certificate-authority/
+
+export USERS_NAME="`finger $(whoami) | egrep -o 'Name: [a-zA-Z0-9 ]{1,}' | cut -d ':' -f 2 | xargs echo`"
+export ROOTCA_LOC="/Users/`whoami`/Library/Application Support/Certificate Authority/${USERS_NAME}'s CA"
+export ROOTCA_NAMES="${ROOTCA_LOC}/${USERS_NAME}'s CA"
+export KEYPASS="superSecurePassword"
+export NGINX_SSL="`brew --prefix`/etc/nginx/ssl/"
+mkdir -p "${ROOTCA_LOC}"
+
+
+echo "Generate Root CA"
+openssl genrsa -aes256 -passout env:KEYPASS -out "${ROOTCA_NAMES}.key.pem" 4096
+openssl req -new -x509 -days 3650 -subj "/C=US/ST=NY/L=Buffalo/O=Development/CN=${USERS_NAME}'s CA" -key "${ROOTCA_NAMES}.key.pem" -sha256 -out "${ROOTCA_NAMES}.crt.pem" -passin env:KEYPASS
+
+echo "Add ${ROOTCA_NAMES}.crt.pem to keychain (manual)"
+#http://sdqali.in/blog/2012/06/05/managing-security-certificates-from-the-console-windows-mac-linux/
+#not working Yet...
+#security add-certificate "${ROOTCA_NAMES}.crt.pem"
+#security add-trusted-cert "${ROOTCA_NAMES}.crt.pem"
+
+# Since our aim is to enable SSL on a web server, bear in mind that if the key is encrypted then you'll have to enter the encryption password every time you restart your web server. Use the -aes256 argument if you wish to encrypt your private key.
+
+mkdir -p ${NGINX_SSL}
+
+echo "Generate SSL cert for loclahost"
+openssl genrsa -out "${NGINX_SSL}localhost.key.pem" 4096
+openssl req -sha256 -new -key "${NGINX_SSL}localhost.key.pem" -out "${NGINX_SSL}localhost.csr.pem" -subj "/C=US/ST=NY/L=Clarence/O=Development/CN=localhost"
+openssl x509 -req -days 3650 -sha256 -CA "${ROOTCA_NAMES}.crt.pem" -CAkey "${ROOTCA_NAMES}.key.pem" -in "${NGINX_SSL}localhost.csr.pem" -set_serial 01  -out "${NGINX_SSL}localhost.crt.pem" -passin env:KEYPASS
 
 #
 # Need to use the following to setup node and nginx

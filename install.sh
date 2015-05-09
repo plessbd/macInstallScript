@@ -23,6 +23,11 @@ export HOMEBREW_CASK_OPTS="--appdir=/Applications"
 brew doctor
 
 brew install node
+npm install -g npm@latest
+npm install -g bower gulp json
+#for automated testing
+npm install -g appium selenium-standalone
+
 
 # https://github.com/Homebrew/homebrew-nginx
 

@@ -27,9 +27,12 @@ brew install caskroom/cask/brew-cask
 brew install nodejs
 npm install -g npm@latest
 ```
-* appium (http://appium.io) `npm -g appium`
-* selenium-standalone (for now my version https://github.com/plessbd/selenium-standalone)
-`npm -g install plessbd/selenium-standalone`
+* appium (http://appium.io)
+```bash
+npm -g appium
+authorize_ios
+```
+* selenium-standalone `npm -g install plessbd/selenium-standalone` (https://github.com/vvo/selenium-standalone/issues/97)
 * Browsers
 	* FireFox `cask install firefox`
 	* Chrome `cask install google-chrome`
@@ -37,3 +40,29 @@ npm install -g npm@latest
 	* MobileSafari (requires xcode from Apple App Store and Simulators from xcode downloads)
 
 ## Config Files
+
+appium_nodeconfig.json
+```json
+{
+	"capabilities":[{
+		"browserName": "safari",
+		"version":"iOS8.3",
+		"maxInstances": 1,
+		"platform":"MAC"
+	}],
+	"configuration":
+	{
+		"cleanUpCycle":2000,
+		"timeout":30000,
+		"proxy": "org.openqa.grid.selenium.proxy.DefaultRemoteProxy",
+		"url":"http://localhost:4723/wd/hub",
+		"host": "localhost",
+		"port": 4723,
+		"maxSession": 1,
+		"register": true,
+		"registerCycle": 5000,
+		"hubPort": 4444,
+		"hubHost": "localhost"
+	}
+}
+```

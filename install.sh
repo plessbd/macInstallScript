@@ -26,7 +26,7 @@ brew install node
 npm install -g npm@latest
 npm install -g bower gulp json
 #for automated testing
-npm install -g appium selenium-standalone
+npm install -g appium selenium-standalone phantomjs plessbd/selenium-standalone
 
 
 # https://github.com/Homebrew/homebrew-nginx
@@ -87,7 +87,7 @@ openssl x509 -req -days 3650 -sha256 -CA "${ROOTCA_NAMES}.crt.pem" -CAkey "${ROO
 brew tap caskroom/versions
 brew install caskroom/cask/brew-cask
 
-brew cask install google-chrome-dev firefoxdeveloperedition
+brew cask install google-chrome-dev firefoxdeveloperedition firefox
 
 # instead of day-o (the developer does not like yosemite http://shauninman.com/archive/2011/10/20/day_o_mac_menu_bar_clock) use itsycal (http://www.mowglii.com/itsycal/)
 brew cask install adium atom bettertouchtool iterm2 itsycal spotify the-unarchiver virtualbox vagrant  asepsis 

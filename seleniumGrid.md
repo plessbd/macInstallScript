@@ -32,7 +32,8 @@ npm install -g npm@latest
 npm -g appium
 authorize_ios
 ```
-* selenium-standalone `npm -g install plessbd/selenium-standalone` (https://github.com/vvo/selenium-standalone/issues/97)
+* selenium-standalone (for now my version https://github.com/plessbd/selenium-standalone)
+`npm -g install plessbd/selenium-standalone`
 * Browsers
 	* FireFox `cask install firefox`
 	* Chrome `cask install google-chrome`
@@ -40,6 +41,17 @@ authorize_ios
 	* MobileSafari (requires xcode from Apple App Store and Simulators from xcode downloads)
 
 ## Config Files
+
+###Without config files, in different terminal windows
+```bash
+selenium-standalone start -- -role hub
+```
+```bash
+selenium-standalone start -- -role node -browser browserName=firefox,maxInstances=1 -browser browserName=chrome,maxInstances=1
+```
+```bash
+appium --nodeconfig "<path to appium_nodeconfig.json>" --platform-version "8.3" --platform-name "iOS"
+```
 
 appium_nodeconfig.json
 ```json
@@ -66,3 +78,42 @@ appium_nodeconfig.json
 	}
 }
 ```
+browsers.json
+used for programatically setting clients
+```json
+{
+	"chrome":{
+		"desiredCapabilities":{
+			"browserName":"chrome"
+		}
+	},
+	"firefox":{
+		"desiredCapabilities":{
+			"browserName":"firefox"
+		}
+	},
+	"phantomjs":{
+		"desiredCapabilities":{
+			"browserName":"phantomjs"
+		}
+	},
+	"iPad2": {
+		"desiredCapabilities": {
+			"browserName": "safari",
+			"appiumVersion": "1.4.0",
+			"deviceName": "iPad 2",
+			"device-orientation": "portrait",
+			"platformName": "iOS"
+		}
+	}
+}
+```
+
+to view the grid in your browser goto:
+http://localhost:4444/grid/console
+
+### links
+https://github.com/appium/appium/blob/master/docs/en/advanced-concepts/grid.md
+https://www.npmjs.com/package/selenium-standalone#selenium-start-opts-cb
+http://www.mkyong.com/java/how-to-set-java_home-environment-variable-on-mac-os-x/
+https://github.com/SeleniumHQ/selenium/wiki/Grid2

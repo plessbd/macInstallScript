@@ -112,6 +112,9 @@ used for programatically setting clients
 to view the grid in your browser goto:
 http://localhost:4444/grid/console
 
+
+#android
+`brew cask install intel-haxm`
 ### links
 https://github.com/appium/appium/blob/master/docs/en/advanced-concepts/grid.md
 https://www.npmjs.com/package/selenium-standalone#selenium-start-opts-cb

@@ -29,7 +29,7 @@ npm install -g npm@latest
 ```
 * [appium](http://appium.io)
 ```bash
-npm -g appium
+npm install -g appium
 authorize_ios
 ```
 * selenium-standalone (My version until this [issue](https://github.com/vvo/selenium-standalone/issues/97) is fixed)

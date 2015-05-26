@@ -32,8 +32,8 @@ npm install -g npm@latest
 npm install -g appium
 authorize_ios
 ```
-* selenium-standalone (My version until this [issue](https://github.com/vvo/selenium-standalone/issues/97) is fixed)
-`npm -g install plessbd/selenium-standalone`
+* selenium-standalone (My [fix](https://github.com/vvo/selenium-standalone/commit/2c36492f0bc0fa969975203ad52043ed8f2643e8) was merged!!)
+`npm -g install selenium-standalone`
 * Browsers
 	* MobileSafari (requires xcode from Apple App Store and Simulators from xcode downloads)
 	* [FireFox](http://getfirefox.com) `cask install firefox`

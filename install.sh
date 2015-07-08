@@ -90,7 +90,7 @@ brew install caskroom/cask/brew-cask
 brew cask install google-chrome-dev firefoxdeveloperedition firefox
 
 # instead of day-o (the developer does not like yosemite http://shauninman.com/archive/2011/10/20/day_o_mac_menu_bar_clock) use itsycal (http://www.mowglii.com/itsycal/)
-brew cask install adium atom bettertouchtool iterm2 itsycal spotify the-unarchiver virtualbox vagrant  asepsis 
+brew cask install adium asepsis atom bettertouchtool iterm2 itsycal spotify the-unarchiver virtualbox vagrant
 
 brew cask install java intellij-idea-ce
 
@@ -100,7 +100,7 @@ brew cask install qlcolorcode qlstephen qlmarkdown quicklook-json quicklook-csv 
 
 echo "Installing APM modules"
 # look into http://blog.atom.io/2014/06/09/stars.html
-apm install atom-beautifier linter linter-jshint linter-javac linter-shellcheck linter-htmlhint file-icons
+apm install atom-beautify linter linter-jshint linter-javac linter-shellcheck linter-htmlhint file-icons
 
 echo "cleaning up"
 brew cask cleanup

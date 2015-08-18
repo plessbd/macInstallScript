@@ -1,0 +1,13 @@
+server {
+  # [::] is for ipv6 support
+  listen       [::]:80;
+  server_name  localhost;
+  root       /var/www/;
+
+  access_log  /usr/local/etc/nginx/logs/default.access.log  json;
+
+  location / {
+    # for php
+    include   /usr/local/etc/nginx/conf.d/php-fpm;
+  }
+}

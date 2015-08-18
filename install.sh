@@ -87,7 +87,15 @@ openssl x509 -req -days 3650 -sha256 -CA "${ROOTCA_NAMES}.crt.pem" -CAkey "${ROO
 brew tap caskroom/versions
 brew install caskroom/cask/brew-cask
 
-brew cask install google-chrome-dev firefoxdeveloperedition firefox
+brew cask install google-chrome-dev firefoxdeveloperedition firefox 
+
+# https://github.com/jimbojsb/launchrocket
+# This will allow easy management of services from a prefpane
+brew cask install launchrocket
+
+# This will allow easy management of services from the commandline
+# https://github.com/Homebrew/homebrew-services
+brew tap homebrew/services
 
 # instead of day-o (the developer does not like yosemite http://shauninman.com/archive/2011/10/20/day_o_mac_menu_bar_clock) use itsycal (http://www.mowglii.com/itsycal/)
 brew cask install adium asepsis atom bettertouchtool iterm2 itsycal spotify the-unarchiver virtualbox vagrant

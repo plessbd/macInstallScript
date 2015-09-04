@@ -34,7 +34,7 @@ npm install -g appium selenium-standalone phantomjs plessbd/selenium-standalone
 echo "Installing nginx"
 
 brew tap homebrew/nginx
-brew install nginx-full --with-fancyindex-module  --with-geoip --with-gzip-static --with-gzip-static --with-gunzip --with-upload-module  --with-upload-progress-module --with-spdy --with-realip
+brew install nginx-full --with-fancyindex-module  --with-geoip --with-gzip-static --with-gunzip --with-upload-module  --with-upload-progress-module --with-spdy --with-realip
 
 #https://jamielinux.com/articles/2013/08/act-as-your-own-certificate-authority/
 #https://gist.github.com/mtigas/952344

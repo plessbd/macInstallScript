@@ -49,8 +49,10 @@ export ROOTCA_LOC="/Users/`whoami`/Library/Application Support/Certificate Autho
 export ROOTCA_NAMES="${ROOTCA_LOC}/${USERS_NAME}'s CA"
 export KEYPASS="superSecurePassword"
 export NGINX_SSL="`brew --prefix`/etc/nginx/ssl/"
-mkdir -p "${ROOTCA_LOC}"
+export SSL_HOSTNAME="localhost"
 
+mkdir -p "${ROOTCA_LOC}"
+mkdir -p ${NGINX_SSL}
 
 echo "Generate Root CA"
 openssl genrsa -aes256 -passout env:KEYPASS -out "${ROOTCA_NAMES}.key.pem" 4096
@@ -66,12 +68,10 @@ echo "You wil  have to add the cert to be trusted on your own as well."
 
 # Since our aim is to enable SSL on a web server, bear in mind that if the key is encrypted then you'll have to enter the encryption password every time you restart your web server. Use the -aes256 argument if you wish to encrypt your private key.
 
-mkdir -p ${NGINX_SSL}
-
 echo "Generate SSL cert for loclahost"
-openssl genrsa -out "${NGINX_SSL}localhost.key.pem" 4096
-openssl req -sha256 -new -key "${NGINX_SSL}localhost.key.pem" -out "${NGINX_SSL}localhost.csr.pem" -subj "/C=US/ST=NY/L=Clarence/O=Development/CN=localhost"
-openssl x509 -req -days 3650 -sha256 -CA "${ROOTCA_NAMES}.crt.pem" -CAkey "${ROOTCA_NAMES}.key.pem" -in "${NGINX_SSL}localhost.csr.pem" -set_serial 01  -out "${NGINX_SSL}localhost.crt.pem" -passin env:KEYPASS
+openssl genrsa -out "${NGINX_SSL}${SSL_HOSTNAME}.key.pem" 4096
+openssl req -sha256 -new -key "${NGINX_SSL}${SSL_HOSTNAME}.key.pem" -out "${NGINX_SSL}${SSL_HOSTNAME}.csr.pem" -subj "/C=US/ST=NY/L=Clarence/O=Development/CN=${SSL_HOSTNAME}"
+openssl x509 -req -days 3650 -sha256 -CA "${ROOTCA_NAMES}.crt.pem" -CAkey "${ROOTCA_NAMES}.key.pem" -in "${NGINX_SSL}${SSL_HOSTNAME}.csr.pem" -set_serial 01  -out "${NGINX_SSL}${SSL_HOSTNAME}.crt.pem" -passin env:KEYPASS
 
 
 #

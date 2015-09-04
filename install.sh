@@ -59,6 +59,8 @@ openssl req -new -x509 -days 3650 -subj "/C=US/ST=NY/L=Buffalo/O=Development/CN=
 echo "Add ${ROOTCA_NAMES}.crt.pem to keychain (manual)"
 #http://sdqali.in/blog/2012/06/05/managing-security-certificates-from-the-console-windows-mac-linux/
 #not working Yet...
+open "${ROOTCA_NAMES}.crt.pem"
+echo "You wil  have to add the cert to be trusted on your own as well."
 #security add-certificate "${ROOTCA_NAMES}.crt.pem"
 #security add-trusted-cert "${ROOTCA_NAMES}.crt.pem"
 

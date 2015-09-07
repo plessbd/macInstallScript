@@ -36,42 +36,95 @@ echo "Installing nginx"
 brew tap homebrew/nginx
 brew install nginx-full --with-fancyindex-module  --with-geoip --with-gzip-static --with-gunzip --with-upload-module  --with-upload-progress-module --with-spdy --with-realip
 
-#https://jamielinux.com/articles/2013/08/act-as-your-own-certificate-authority/
-#https://gist.github.com/mtigas/952344
-#http://blog.nategood.com/client-side-certificate-authentication-in-ngi
-#https://gist.github.com/jed/6147872
-#http://blog.frd.mn/install-nginx-php-fpm-mysql-and-phpmyadmin-on-os-x-mavericks-using-homebrew/
-#https://gist.github.com/igalic/4943106
-#http://datacenteroverlords.com/2012/03/01/creating-your-own-ssl-certificate-authority/
+# Used to set where the location is to be, this is specific to OS X
+# TODO: remove all these exports, they really dont need to be in the environment
+# TODO: make this into two scripts, one for generating the CA one for generating self-signed
+# Lots of reading, but very helpful
+# https://jamielinux.com/articles/2013/08/act-as-your-own-certificate-authority/
+# https://gist.github.com/mtigas/952344
+# http://blog.nategood.com/client-side-certificate-authentication-in-ngi
+# https://gist.github.com/jed/6147872
+# http://blog.frd.mn/install-nginx-php-fpm-mysql-and-phpmyadmin-on-os-x-mavericks-using-homebrew/
+# https://gist.github.com/igalic/4943106
+# http://datacenteroverlords.com/2012/03/01/creating-your-own-ssl-certificate-authority/
 
-export USERS_NAME="`finger $(whoami) | egrep -o 'Name: [a-zA-Z0-9 ]{1,}' | cut -d ':' -f 2 | xargs echo`"
-export ROOTCA_LOC="/Users/`whoami`/Library/Application Support/Certificate Authority/${USERS_NAME}'s CA"
-export ROOTCA_NAMES="${ROOTCA_LOC}/${USERS_NAME}'s CA"
-export KEYPASS="superSecurePassword"
-export NGINX_SSL="`brew --prefix`/etc/nginx/ssl/"
-export SSL_HOSTNAME="localhost"
+export USERS_NAME="$(finger $(whoami) | egrep -o 'Name: [a-zA-Z0-9 ]{1,}' | cut -d ':' -f 2 | xargs echo)"
+export CA_FILELOCATION="/Users/$(whoami)/Library/Application Support/Certificate Authority/${USERS_NAME}'s CA"
+export CA_BASENAME="${CA_FILELOCATION}/${USERS_NAME}'s CA"
 
-mkdir -p "${ROOTCA_LOC}"
-mkdir -p ${NGINX_SSL}
+# PEM Formated Key and Cert
+export CA_KEY="${CA_BASENAME}.key.pem"
+export CA_CERT="${CA_BASENAME}.crt.pem"
 
-echo "Generate Root CA"
-openssl genrsa -aes256 -passout env:KEYPASS -out "${ROOTCA_NAMES}.key.pem" 4096
-openssl req -new -x509 -days 3650 -subj "/C=US/ST=NY/L=Buffalo/O=Development/CN=${USERS_NAME}'s CA" -key "${ROOTCA_NAMES}.key.pem" -sha256 -out "${ROOTCA_NAMES}.crt.pem" -passin env:KEYPASS
+export CA_PASSWORD="superSecretPassword"
+# Could set a random password, not as useful when using the CA to create self-signed certs
+# "$(env LC_CTYPE=C tr -dc 'a-zA-Z0-9-_\$\?' < /dev/urandom | head -c 32)"
 
-echo "Add ${ROOTCA_NAMES}.crt.pem to keychain (manual)"
-#http://sdqali.in/blog/2012/06/05/managing-security-certificates-from-the-console-windows-mac-linux/
-#not working Yet...
-open "${ROOTCA_NAMES}.crt.pem"
-echo "You wil  have to add the cert to be trusted on your own as well."
-#security add-certificate "${ROOTCA_NAMES}.crt.pem"
-#security add-trusted-cert "${ROOTCA_NAMES}.crt.pem"
+# DER Formatted Certificate for importing into keychain
+export CA_CERT_DER="${CA_BASENAME}.crt.der"
 
-# Since our aim is to enable SSL on a web server, bear in mind that if the key is encrypted then you'll have to enter the encryption password every time you restart your web server. Use the -aes256 argument if you wish to encrypt your private key.
+mkdir -p "${CA_FILELOCATION}"
 
-echo "Generate SSL cert for loclahost"
-openssl genrsa -out "${NGINX_SSL}${SSL_HOSTNAME}.key.pem" 4096
-openssl req -sha256 -new -key "${NGINX_SSL}${SSL_HOSTNAME}.key.pem" -out "${NGINX_SSL}${SSL_HOSTNAME}.csr.pem" -subj "/C=US/ST=NY/L=Clarence/O=Development/CN=${SSL_HOSTNAME}"
-openssl x509 -req -days 3650 -sha256 -CA "${ROOTCA_NAMES}.crt.pem" -CAkey "${ROOTCA_NAMES}.key.pem" -in "${NGINX_SSL}${SSL_HOSTNAME}.csr.pem" -set_serial 01  -out "${NGINX_SSL}${SSL_HOSTNAME}.crt.pem" -passin env:KEYPASS
+if [ ! -e  ${CA_CERT} ]; then
+
+	export C="US"
+	echo "Country: ${C}"
+	export ST="NY"
+	echo "State/Province: ${ST}"
+	export L="Clarence"
+	echo "Locality (City): ${L}"
+	export O="Development"
+	echo "Organization: ${O}"
+	export CN="${USERS_NAME}'s CA"
+	echo "Common Name: ${CN}"
+
+	echo "Creating Certificate Authority for Self Signed Certificates"
+
+	openssl genrsa -aes256 -passout env:CA_PASSWORD -out "${CA_KEY}" 4096
+	openssl req -new -x509 -sha256 \
+		-days 3650 \
+		-subj "/C=${C}/ST=${ST}/L=${L}/O=${O}/CN=${CN}" \
+		-key "${CA_KEY}" \
+		-out "${CA_CERT}" \
+		-passin env:CA_PASSWORD
+
+	echo "Converting certificate to DER encoding for importing into keychain"
+	openssl x509 -inform PEM -in ${CA_CERT} -outform DER -out ${CA_CERT_DER}
+	
+	echo "Adding root CA to Keychain"
+	# http://sdqali.in/blog/2012/06/05/managing-security-certificates-from-the-console-windows-mac-linux/
+	security add-certificate "${CA_CERT_DER}"
+	echo "trusting root CA, this will require user authentication."
+	security add-trusted-cert "${CA_CERT_DER}"
+
+fi
+
+export CERT_DESTINATION="$(brew --prefix)/etc/nginx/ssl/"
+export TEST_DOMAIN="ben.dev"
+export TEST_DOMAIN_KEY="${CERT_DESTINATION}star.${TEST_DOMAIN}.key.pem"
+export TEST_DOMAIN_CSR="${CERT_DESTINATION}star.${TEST_DOMAIN}.csr.pem"
+export TEST_DOMAIN_CERT="${CERT_DESTINATION}star.${TEST_DOMAIN}.crt.pem"
+
+mkdir -p "${CERT_DESTINATION}"
+
+echo "Since our aim is to enable SSL on a web server, bear in mind that if the key is encrypted then you'll have to enter the encryption password every time you restart your web server. Use the -aes256 argument if you wish to encrypt your private key."
+echo "Generate *.${TEST_DOMAIN} key"
+openssl genrsa -out "${TEST_DOMAIN_KEY}" 4096
+
+echo "Generate Certificate Signing Request *.${TEST_DOMAIN}"
+openssl req -sha256 -new \
+	-key "${TEST_DOMAIN_KEY}" \
+	-out "${TEST_DOMAIN_CSR}" \
+	-subj "/C=${C}/ST=${ST}/L=${L}/O=${O}/CN=*.${TEST_DOMAIN}"
+
+echo "Generate certificate *.${TEST_DOMAIN} signed by ${USERS_NAME}'s Certificate Authority'"
+openssl x509 -req -sha256 -set_serial 01 \
+	-days 3650 \
+	-CA "${CA_CERT}" \
+	-CAkey "${CA_KEY}" \
+	-in "${TEST_DOMAIN_CSR}" \
+	-out "${TEST_DOMAIN_CERT}" \
+	-passin env:CA_PASSWORD
 
 
 #

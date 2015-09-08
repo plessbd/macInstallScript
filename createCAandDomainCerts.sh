@@ -83,7 +83,8 @@ CA_KEY="${CA_BASENAME}.key.pem"
 CA_CERT="${CA_BASENAME}.crt.pem"
 CA_CERT_DER="${CA_BASENAME}.crt.der"
 
-CA_PASSWORD="superSecretPassword"
+# TODO: Need to not export this, but allow the user to set the environment variable
+export CA_PASSWORD="superSecretPassword"
 
 echo "Options:"
 echo "\tUSERS_NAME = $USERS_NAME"
@@ -93,15 +94,15 @@ echo "\tCA_KEY = $CA_KEY"
 echo "\tCA_CERT = $CA_CERT"
 echo "\tCA_CERT_DER = $CA_CERT_DER"
 echo "\tCA_PASSWORD = Really?"
-echo "Country: ${C}"
-echo "State/Province: ${ST}"
-echo "Locality (City): ${L}"
-echo "Organization: ${O}"
-echo "Common Name: ${CN}"
+echo "\n\tCountry: ${C}"
+echo "\tState/Province: ${ST}"
+echo "\tLocality (City): ${L}"
+echo "\tOrganization: ${O}"
+echo "\tCommon Name: ${CN}"
 
 mkdir -p "${CA_FILELOCATION}"
 
-if [ ! -e  ${CA_CERT} ]; then
+if [ ! -e "${CA_CERT}" ]; then
 
 	echo "Creating Certificate Authority for Self Signed Certificates"
 
@@ -114,19 +115,19 @@ if [ ! -e  ${CA_CERT} ]; then
 		-passin env:CA_PASSWORD
 
 	echo "Converting certificate to DER encoding for importing into keychain"
-	openssl x509 -inform PEM -in ${CA_CERT} -outform DER -out ${CA_CERT_DER}
+	openssl x509 -inform PEM -in "${CA_CERT}" -outform DER -out "${CA_CERT_DER}"
 
+  # TODO: Implement this for each OS, only for mac at the moment
 	echo "Adding root CA to Keychain"
 	# http://sdqali.in/blog/2012/06/05/managing-security-certificates-from-the-console-windows-mac-linux/
 	security add-certificate "${CA_CERT_DER}"
-	echo "trusting root CA, this will require user authentication."
+	echo "Trusting root CA, this will require user authentication."
 	security add-trusted-cert "${CA_CERT_DER}"
-
 fi
 
 mkdir -p "${CERT_DESTINATION}"
 
-echo "Since our aim is to enable SSL on a web server, bear in mind that if the key is encrypted then you'll have to enter the encryption password every time you restart your web server. Use the -aes256 argument if you wish to encrypt your private key."
+echo "Since our aim is to enable SSL on a web server, bear in mind that if the key is encrypted then you will have to enter the encryption password every time you restart your web server. Use the -aes256 argument if you wish to encrypt your private key."
 echo "Generate *.${DOMAIN} key"
 openssl genrsa -out "${DOMAIN_KEY}" 4096
 

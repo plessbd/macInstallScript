@@ -108,7 +108,7 @@ echo "\n\tDomain: ${DOMAIN}"
 echo "Do you wish to proceed using the above options?"
 select yn in "Yes" "No"; do
     case $yn in
-        Yes ) make install; break;;
+        Yes ) break;;
         No ) exit;;
     esac
 done

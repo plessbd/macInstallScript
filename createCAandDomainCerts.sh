@@ -24,19 +24,19 @@ function HELP {
   echo "Example: ${BOLD}$SCRIPT -u Ben ${DOMAIN}${NORM}"
   exit 1
 }
+# Default values
 USERS_NAME="$(finger $(whoami) | egrep -o 'Name: [a-zA-Z0-9 ]{1,}' | cut -d ':' -f 2 | xargs echo)"
 CERT_DESTINATION="$(brew --prefix)/etc/nginx/ssl/"
 CA_FILELOCATION="/Users/$(whoami)/Library/Application Support/Certificate Authority/${USERS_NAME}'s CA"
-
 C="US"
 ST="NY"
 L="Clarence"
 O="Development"
 CN="${USERS_NAME}'s CA"
-DOMAIN="bpless.dev"
-DOMAIN_KEY="${CERT_DESTINATION}star.${TEST_DOMAIN}.key.pem"
-DOMAIN_CSR="${CERT_DESTINATION}star.${TEST_DOMAIN}.csr.pem"
-DOMAIN_CERT="${CERT_DESTINATION}star.${TEST_DOMAIN}.crt.pem"
+DOMAIN="ben.dev"
+DOMAIN_KEY="${CERT_DESTINATION}star.${DOMAIN}.key.pem"
+DOMAIN_CSR="${CERT_DESTINATION}star.${DOMAIN}.csr.pem"
+DOMAIN_CERT="${CERT_DESTINATION}star.${DOMAIN}.crt.pem"
 
 
 while getopts :u:f:c:s:l:o:n:h FLAG; do
@@ -78,6 +78,10 @@ while [ $# -ne 0 ]; do
   shift  #Move on to next input file.
 done
 
+DOMAIN_KEY="${CERT_DESTINATION}star.${DOMAIN}.key.pem"
+DOMAIN_CSR="${CERT_DESTINATION}star.${DOMAIN}.csr.pem"
+DOMAIN_CERT="${CERT_DESTINATION}star.${DOMAIN}.crt.pem"
+
 CA_BASENAME="${CA_FILELOCATION}/${USERS_NAME}'s CA"
 CA_KEY="${CA_BASENAME}.key.pem"
 CA_CERT="${CA_BASENAME}.crt.pem"
@@ -89,7 +93,7 @@ export CA_PASSWORD="superSecretPassword"
 echo "Options:"
 echo "\tUSERS_NAME = $USERS_NAME"
 echo "\tCA_FILELOCATION = $CA_FILELOCATION"
-echo "\tCA_BASENAME = $CA_BASENAME"
+#echo "\tCA_BASENAME = $CA_BASENAME"
 echo "\tCA_KEY = $CA_KEY"
 echo "\tCA_CERT = $CA_CERT"
 echo "\tCA_CERT_DER = $CA_CERT_DER"
@@ -99,6 +103,15 @@ echo "\tState/Province: ${ST}"
 echo "\tLocality (City): ${L}"
 echo "\tOrganization: ${O}"
 echo "\tCommon Name: ${CN}"
+echo "\n\tDomain: ${DOMAIN}"
+
+echo "Do you wish to proceed using the above options?"
+select yn in "Yes" "No"; do
+    case $yn in
+        Yes ) make install; break;;
+        No ) exit;;
+    esac
+done
 
 mkdir -p "${CA_FILELOCATION}"
 
